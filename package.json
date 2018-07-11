@@ -16,10 +16,12 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@hlhr202/mobx-remotedev": "0.2.9",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
-    "@hlhr202/mobx-remotedev": "0.2.9",
+    "mobx-utils": "^5.0.0",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "rxjs": "^6.2.1"
   }
 }
