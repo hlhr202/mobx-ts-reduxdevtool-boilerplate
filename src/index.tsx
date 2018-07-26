@@ -1,47 +1,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { observable, computed, observe, Lambda } from "mobx";
 import { observer, Provider, inject } from 'mobx-react'
 import RootStore from './store'
-import Person from './store/Person'
-import OrderLine from './store/OrderLine'
-import Book from './store/Book'
-
-type IInjectProps = Pick<RootStore, 'orderLine' | 'person' | 'book'>
-
-@inject('orderLine')
-@inject('person')
-@inject('book')
-@observer
-class HelloWorld extends React.Component {
-    get store() {
-        return this.props as IInjectProps
-    }
-    render() {
-        console.log(this.store.book.covers.current)
-        return (
-            <div>
-                <p>amount: {this.store.orderLine.amount}</p>
-                <p>price: {this.store.orderLine.price}</p>
-                <p>total: {this.store.orderLine.total}</p>
-                <p>name: {this.store.person.name}</p>
-
-                <p>author: {this.store.book.author}</p>
-                <button onClick={() => this.store.orderLine.incrementPrice()}> + </button>
-                <button onClick={() => this.store.person.setName('345')}> changeName </button>
-                <button onClick={() => this.store.book.changeBookName('333333')}> changeBookName </button>
-                <button onClick={() => this.store.book.changeBookName2()}> changeBookName2 </button>
-
-
-                <ul>
-                    {this.store.book.covers.current.map((n, i) => (
-                        <li key={i}>{n}</li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-}
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Fade } from '@material-ui/core'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 type IAlbumProps = Pick<RootStore, 'album'>
 
@@ -53,17 +15,36 @@ class Album extends React.Component {
     }
 
     render() {
-        console.log(this.store.album.albums.current)
+        console.log(this.store.album.loading.current)
         return (
             <div>
-                <button onClick={this.store.album.getAlbums}>getAlbum</button>
-                {this.store.album.albums.current.map(({ id, userId, title }, index) => (
-                    <React.Fragment key={index}>
-                        <p>id: {id}</p>
-                        <p>userId: {userId}</p>
-                        <p>title: {title}</p>
-                    </React.Fragment>
-                ))}
+                <Button onClick={this.store.album.getAlbums}>get Albums</Button>
+                <Button onClick={this.store.album.resetAlbums}>reset Albums</Button>
+                <Button onClick={this.store.album.cancel}>cancel</Button>
+                {this.store.album.loading.current && <CircularProgress />}
+
+                <Paper style={{ width: '100%', overflowX: 'auto' }}>
+                    <Table style={{ minWidth: 700 }}>
+                        <TableHead>
+                            <TableRow style={{ background: '#333' }}>
+                                <TableCell style={{ color: '#eee' }}>id</TableCell>
+                                <TableCell style={{ color: '#eee' }}>userId</TableCell>
+                                <TableCell style={{ color: '#eee' }}>title</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.store.album.albums.current.map(({ id, userId, title }, index) => {
+                                return (
+                                    <TableRow key={index}>
+                                        <TableCell>{id}</TableCell>
+                                        <TableCell>{userId}</TableCell>
+                                        <TableCell>{title}</TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Paper>
             </div>
         )
     }
@@ -72,10 +53,7 @@ class Album extends React.Component {
 class Main extends React.Component {
     render() {
         return (
-            <>
-                <HelloWorld />
-                <Album />
-            </>
+            <Album />
         )
     }
 }
